@@ -80,9 +80,9 @@ def part_two(input):
 def main():
     input = open("day_1_input.txt", "r")
 
-    print("Part one answer: ", part_one(input))
+    print("Trebuchet part one answer: ", part_one(input))
     input.seek(0)
-    print("Part two answer: ", part_two(input))
+    print("Trebuchet part two answer: ", part_two(input))
 
 
 if __name__ == "__main__":
