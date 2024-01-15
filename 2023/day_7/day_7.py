@@ -54,6 +54,62 @@ class Hand:
     def __str__(self) -> str:
         return self.cards
 
+class Hand_part_two:
+    def __init__(self, entry) -> None:
+        self.cards = entry[0]
+        self.bid = int(entry[1])
+        self.strengths = {"A": 13, "K": 12, "Q": 11, "T": 10, "9": 9,
+                          "8": 8, "7": 7, "6": 6, "5": 5, "4": 4,
+                          "3": 3, "2": 2, "J": 1}
+
+        tmp = {}
+
+        for card in self.cards:
+            if card in tmp:
+                tmp[card] += 1
+            else:
+                tmp.update({card: 1})
+        
+        if "J" in tmp and len(tmp) > 1:
+            num_of_J = tmp.pop("J")
+            tmp[max(tmp, key=tmp.get)] += num_of_J
+
+        match len(tmp):
+            case 1:
+                self.type = 1
+            case 2:
+                if tmp[max(tmp, key=tmp.get)] == 4:
+                    self.type = 2
+                else:
+                    self.type = 3
+            case 3:
+                if tmp[max(tmp, key=tmp.get)] == 3:
+                    self.type = 4
+                else:
+                    self.type = 5
+            case 4:
+                self.type = 6
+            case 5:
+                self.type = 7
+            case _:
+                self.type = 8
+
+    def __gt__(self, __o: object) -> bool:
+        if self.type == __o.type:
+            for index, card in enumerate(self.cards):
+                if self.strengths[card] == self.strengths[__o.cards[index]]:
+                    continue
+                elif self.strengths[card] > self.strengths[__o.cards[index]]:
+                    return True
+                else:
+                    return False
+        elif self.type < __o.type:
+            return True
+        else:
+            return False
+
+    def __str__(self) -> str:
+        return self.cards
 
 def rank_hand(answers, left, right, hand) -> int:
     if len(answers) == 0:
@@ -91,7 +147,21 @@ def camel_cards_part_one(input) -> int:
 
 
 def camel_cards_part_two(input) -> int:
-    pass
+    lines = input.readlines()
+    answers = []
+
+    for line in lines:
+        hand = Hand_part_two(line.split())
+        index = rank_hand(answers, 0, len(answers), hand)
+        answers.insert(index, hand)
+
+    answer = 0
+    rank = 1
+    for hand in answers:
+        answer += hand.bid * rank
+        rank += 1
+
+    return answer
 
 
 def main() -> None:
